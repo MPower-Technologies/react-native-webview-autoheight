@@ -16,7 +16,6 @@ import {
   View,
   Dimensions,
   WebView,
-  Linking
 } from 'react-native';
 
 const injectedScript = function() {
@@ -64,11 +63,16 @@ export default class MyWebView extends Component {
     });
   }
 
+  stopLoading() {
+    this.webview.stopLoading();
+  }
+
   render () {
     const _w = this.props.width || Dimensions.get('window').width;
     const _h = this.props.autoHeight ? this.state.webViewHeight : this.props.defaultHeight;
     return (
       <WebView
+        ref={(ref) => { this.webview = ref; }}
         injectedJavaScript={'(' + String(injectedScript) + ')();'}
         scrollEnabled={this.props.scrollEnabled || false}
         onMessage={this._onMessage}
@@ -76,11 +80,6 @@ export default class MyWebView extends Component {
         automaticallyAdjustContentInsets={true}
         {...this.props}
         style={[{width: _w}, this.props.style, {height: _h}]}
-        ref={(ref) => { this.webview = ref; }}
-        onNavigationStateChange={(event) => {
-          this.webview.stopLoading();
-          Linking.openURL(event.url);
-        }}
       />
     )
   }
